@@ -185,8 +185,8 @@ const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({
             form.setValue("name", data.title);
             form.setValue("campaignType", data.type);
             form.setValue("knownDuration", data.familiarDuration);
-            form.setValue("campaignDuration", data.duration.toString() || "");
-            form.setValue("amount", data.totalAmount.toString() || "");
+            form.setValue("campaignDuration", data.duration ? data.duration.toString() : "");
+            form.setValue("amount", data.totalAmount ? data.totalAmount.toString() : "");
             form.setValue("description", data.description);
             form.setValue("image",
                 data.image && 'id' in data.image && data.image.id

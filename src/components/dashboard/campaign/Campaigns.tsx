@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
+import { ArrowDown, ArrowUp, MoreHorizontal, Info } from "lucide-react";
 import React, { useState } from "react";
 
 import Pagination from "@/components/pagination/Pagination";
@@ -18,6 +18,12 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
     deleteCampaign,
     getAllCampaigns,
@@ -453,7 +459,7 @@ const Campaigns: React.FC<CampaignsProps> = ({
                                                 "---"
                                             )}
                                         </td>
-                                        <td className="p-3">
+                                        <td className="p-3 flex items-center gap-2">
                                             {campaign?.status ? (
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
@@ -492,6 +498,24 @@ const Campaigns: React.FC<CampaignsProps> = ({
                                             ) : (
                                                 "---"
                                             )}
+                                            {campaign?.familiarDuration ===
+                                                "I don't know them personally" && (
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <div className="cursor-help">
+                                                                    <Info className="h-5 w-5 text-red-500" />
+                                                                </div>
+                                                            </TooltipTrigger>
+                                                            <TooltipContent>
+                                                                <p>
+                                                                    I don't know
+                                                                    them personally
+                                                                </p>
+                                                            </TooltipContent>
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                )}
                                         </td>
                                         <td className="p-3 text-sm text-nowrap">
                                             {campaign?.endDate
