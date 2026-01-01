@@ -1,9 +1,10 @@
-import { LogOut, Plus, Search } from "lucide-react";
+import { LogOut, Plus, Search, Settings } from "lucide-react";
 import { useState } from "react";
 
 import Ansars from "@/components/dashboard/ansars/Ansars";
 import SendNotification from "@/components/dashboard/ansars/SendNotification";
 import Campaigns from "@/components/dashboard/campaign/Campaigns";
+import CampaignSettingsDialog from "@/components/dashboard/campaign/CampaignSettingsDialog";
 import CreateCampaignForm from "@/components/dashboard/campaign/CreateCampaignForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -100,6 +101,7 @@ function App() {
 
     // Create Campaign
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
 
     // useEffect(() => {
     //     if (activeTab === "campaigns") {
@@ -194,22 +196,32 @@ function App() {
                             </TabsList>
                             <div className="flex gap-2">
                                 {activeTab !== "ansars" && (
-                                    <Button
-                                        onClick={() => {
-                                            {
-                                                activeTab === "campaigns"
-                                                    ? setCreateDialogOpen(true)
-                                                    : setCreateDialogOpen(
-                                                          false
-                                                      );
-                                            }
-                                        }}
-                                        className="whitespace-nowrap"
-                                        variant={"outline"}
-                                    >
-                                        <Plus className="mr-2 h-4 w-4" />
-                                        Create New
-                                    </Button>
+                                    <>
+                                        <Button
+                                            onClick={() => setSettingsDialogOpen(true)}
+                                            className="whitespace-nowrap"
+                                            variant={"outline"}
+                                        >
+                                            <Settings className="mr-2 h-4 w-4" />
+                                            Settings
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                {
+                                                    activeTab === "campaigns"
+                                                        ? setCreateDialogOpen(true)
+                                                        : setCreateDialogOpen(
+                                                            false
+                                                        );
+                                                }
+                                            }}
+                                            className="whitespace-nowrap"
+                                            variant={"outline"}
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" />
+                                            Create New
+                                        </Button>
+                                    </>
                                 )}
 
                                 {/* Send Multiple Notification */}
@@ -289,8 +301,8 @@ function App() {
                                         activeTab === "campaigns"
                                             ? "Search campaigns..."
                                             : activeTab === "ansars"
-                                              ? "Search ansars, campaigns..."
-                                              : "Search"
+                                                ? "Search ansars, campaigns..."
+                                                : "Search"
                                     }
                                     className="pl-8 w-full"
                                     value={searchQuery}
@@ -670,8 +682,8 @@ function App() {
                                     blockStatus === "all" || blockStatus === ""
                                         ? null
                                         : blockStatus === "BLOCKED"
-                                          ? true
-                                          : false
+                                            ? true
+                                            : false
                                 }
                                 selectedRows={selectedUsers}
                                 setSelectedRows={setSelectedUsers}
@@ -717,6 +729,11 @@ function App() {
                 <CreateCampaignForm
                     visible={createDialogOpen}
                     setVisible={setCreateDialogOpen}
+                />
+
+                <CampaignSettingsDialog
+                    visible={settingsDialogOpen}
+                    setVisible={setSettingsDialogOpen}
                 />
 
                 {/* Log Out Confirmation Dialog */}

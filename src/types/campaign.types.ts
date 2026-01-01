@@ -39,7 +39,7 @@ export const campaignFilterSchema = z.object({
 export type CampaignFilterField = z.infer<typeof campaignFilterSchema>
 
 // Schema for creating/editing a campaign
-export const campaignFormSchema = z.object({
+export const getCampaignFormSchema = (amountLimit: number = 999) => z.object({
   id: z.string().optional(),
   name: z.string().min(3, { message: "Campaign name is required" }).max(50, { message: "Campaign name must be less than 50 characters" }),
   campaignType: z.nativeEnum(CampaignType),
@@ -47,15 +47,17 @@ export const campaignFormSchema = z.object({
   campaignDuration: z.string().min(1, { message: "Campaign duration is required" }),
   amount: z.string().refine((val) => {
     const num = Number(val);
-    return !isNaN(num) && num > 0 && num < 1000;
+    return !isNaN(num) && num > 0 && num <= amountLimit;
   }, {
-    message: "Amount should be between 1 and 999",
+    message: `Amount should be between 1 and ${amountLimit}`,
   }),
   description: z.string().nonempty({ message: "Description is required" }),
   newUsers: z.array(z.object({ phone: z.string() })).optional(),
-  image: z.union([z.instanceof(File), imageMetadata]).nullable(),
+  image: z.union([z.instanceof(File), imageMetadata]).nullable().optional(),
 })
 
+// Define a type based on the schema (using a default limit for type inference)
+export const campaignFormSchema = getCampaignFormSchema(999);
 export type CampaignFormField = z.infer<typeof campaignFormSchema>
 
 /* <----- Get Campaigns Types [Start] -----> */

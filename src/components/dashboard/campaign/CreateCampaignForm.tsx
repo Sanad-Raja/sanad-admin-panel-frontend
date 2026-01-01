@@ -36,9 +36,9 @@ import queryClient from "@/helpers/query.config";
 import { campaignTypeOptions, QUERY_KEY } from "@/lib/constans";
 import { validatePhone } from "@/lib/utils";
 import {
-    campaignFormSchema,
     CampaignType,
     durationOptions,
+    getCampaignFormSchema,
     type CampaignFormField,
     type ICampaign
 } from "@/types/campaign.types";
@@ -52,12 +52,32 @@ interface CreateCampaignFormProps {
     setVisible: (value: boolean) => void;
 }
 
+import { getCampaignSettings } from "@/helpers/apis/campaignSettings";
+import { useQuery } from "@tanstack/react-query";
+
 const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({
     data,
     visible,
     setVisible,
 }) => {
     const router = useRouter();
+
+    const [amountLimit, setAmountLimit] = useState<number>(0);
+
+    const { data: settings } = useQuery({
+        queryKey: ["campaign-settings"],
+        queryFn: getCampaignSettings,
+        enabled: visible,
+    });
+
+    useEffect(() => {
+        if (settings?.data) {
+            const data = Array.isArray(settings.data) ? settings.data[0] : settings.data;
+            if (data?.amountLimit) {
+                setAmountLimit(data.amountLimit);
+            }
+        }
+    }, [settings]);
 
     const form = useForm<CampaignFormField>({
         defaultValues: {
@@ -70,7 +90,7 @@ const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({
             newUsers: [],
         },
         mode: "onChange",
-        resolver: zodResolver(campaignFormSchema),
+        resolver: zodResolver(getCampaignFormSchema(amountLimit || 999)),
     });
     const [userPhone, setUserPhone] = useState<string>("");
 
@@ -352,23 +372,14 @@ const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({
                                         </FormLabel>
                                         <FormControl>
                                             <Input
-                                                placeholder="$ 0"
+                                                placeholder={`Max $ ${amountLimit || 999}`}
                                                 value={field.value}
                                                 onChange={(e) => {
                                                     const value = e.target.value.replace(
                                                         /[^0-9.]/g,
                                                         ""
                                                     );
-                                                    if (
-                                                        value === "" ||
-                                                        (Number(value) >= 0 &&
-                                                            Number(value) <=
-                                                            999)
-                                                    ) {
-                                                        field.onChange(
-                                                            value
-                                                        );
-                                                    }
+                                                    field.onChange(value);
                                                 }}
                                             />
                                         </FormControl>
